@@ -1,11 +1,15 @@
 # coding:utf8
 # 入库程序
-import MySQLdb
+from DBmodel import mysqldbhand
 
 
 class HtmlOutputer(object):
-    def __init__(self):
+    global db
+    global tablename
+
+    def __init__(self, table):
         self.datas = []
+        self.tablename = table
 
     def collect_data(self, data):
         if data is None:
@@ -13,22 +17,11 @@ class HtmlOutputer(object):
         self.datas.append(data)
 
     def output_html(self):
-        try:
-            conn = MySQLdb.connect(
-                host='localhost', user='root', passwd='l9851223', db='python', port=3306, charset='utf8')
-            cur = conn.cursor()
-
-            for data in self.datas:
-                value = [data['url'], data['title'].encode(
-                    'utf-8'), data['summary'].encode('utf-8')]
-                cur.execute(
-                    'insert into spider (url,title,content) values(%s,%s,%s)', value)
-
-            conn.commit()
-            cur.close()
-            conn.close()
-        except MySQLdb.Error, e:
-            print "Mysql Error %d: %s" % (e.args[0], e.args[1])
+        db = mysqldbhand()
+        db.dbconnect()
+        for data in self.datas:
+            insert_data = {'url': data['url'], 'biaoti':data['title'].encode('utf-8'), 'jianjie': data['summary'].encode('utf-8')}
+            res = db.Save(self.tablename, insert_data)
         exit
 
         # 第二种写法
@@ -39,7 +32,7 @@ class HtmlOutputer(object):
         # fout.write("<body>")
         # fout.write("<table>")
 
-        # # ascii
+        # ascii
         # for data in self.datas:
         #     fout.write("<tr>")
         #     fout.write("<td> %s </td>" % data['url'])
