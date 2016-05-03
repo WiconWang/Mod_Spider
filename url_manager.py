@@ -1,15 +1,21 @@
 # coding:utf8
 # URL管理器
 from DBmodel import mysqldbhand
+import ConfigParser
 
 
 class UrlManager(object):
     global db
     global tablename
+    global root_url
 
     def __init__(self, table):
         self.new_urls = set()
         self.old_urls = set()
+        cf = ConfigParser.ConfigParser()
+        cf.read("config.conf")
+        self.root_url = '%s' % cf.get("start", "root_url")
+        # 找出DB中检出的记录，并做为已采集记录进行流程排除
         db = mysqldbhand()
         db.dbconnect()
         self.tablename = table
@@ -20,9 +26,6 @@ class UrlManager(object):
         # print self.old_urls
 
     def add_new_url(self, url):
-
-        # print self.old_urls
-        # exit()
         if url is None:
             return
         if url not in self.new_urls and url not in self.old_urls:
@@ -39,9 +42,9 @@ class UrlManager(object):
 
     def get_new_url(self):
         new_url = self.new_urls.pop()
-        print new_url
-        print self.new_urls
-        print self.old_urls
+        # print new_url
+        # print self.new_urls
+        # print self.old_urls
         # exit
         self.old_urls.add(new_url)
         return new_url

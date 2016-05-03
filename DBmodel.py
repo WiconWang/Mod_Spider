@@ -33,7 +33,7 @@ class mysqldbhand:
         # print '项目 `%s` 收集启动 ' % (project[0][1])
 
         # 内容存储表结构
-        sql_field = '`id` int(10) unsigned NOT NULL AUTO_INCREMENT,`isok` tinyint(4) unsigned NOT NULL DEFAULT 0,'
+        sql_field = '`id` int(10) unsigned NOT NULL AUTO_INCREMENT,`isok` tinyint(4) unsigned NOT NULL DEFAULT 0,`url` varchar(255) DEFAULT NULL,'
         for m in project_field:
             if m[3] == 'varchar':
                 sql_field += '`%s` varchar(255) DEFAULT NULL,' % (m[2])
@@ -83,7 +83,7 @@ class mysqldbhand:
             pass
         namestr = ','.join(name)
         valuestr = ','.join(value)
-        print upstr
+        # print upstr
         upstr = upstr[:-1]
 
         if where:
@@ -95,7 +95,7 @@ class mysqldbhand:
         else:
             sql = "insert into `%s` (%s) values (%s) " % (
                 table, namestr, valuestr)
-        print sql
+        # print sql
         try:
             self.con.execute(sql)
             self.dbcon.commit()
