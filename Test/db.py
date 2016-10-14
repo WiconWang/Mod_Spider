@@ -30,3 +30,18 @@ print one == two
 #True
 print one is two
 #True
+
+
+
+
+   # def getlog(self, info):
+    #     logger = logging.getLogger()
+    #     hdlr = logging.FileHandler(info['logfile'])
+    #     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    #     hdlr.setFormatter(formatter)
+    #     logger.addHandler(hdlr)
+    #     try:
+    #         logger.setLevel(info['loglevel'])
+    #     except:
+    #         print "你输入的日志等级不正确"
+    #     return logger
