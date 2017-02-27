@@ -1,6 +1,7 @@
 # coding:utf8
 # DB
 import MySQLdb
+import MySQLdb.cursors
 import ConfigParser
 import sys
 reload(sys)
@@ -15,7 +16,7 @@ class mysqldbhand:
         cf.read("config.conf")
         try:
             self.dbcon = MySQLdb.connect(host='%s' % cf.get("db", "db_host"), user='%s' % cf.get("db", "db_user"), passwd='%s' % cf.get(
-                "db", "db_pass"), db='%s' % cf.get("db", "db_name"), port=cf.getint("db", "db_port"), charset='utf8')
+                "db", "db_pass"), db='%s' % cf.get("db", "db_name"), port=cf.getint("db", "db_port"), cursorclass=MySQLdb.cursors.DictCursor, charset='utf8')
             self.con = self.dbcon.cursor()
         except:
             print("数据库连接失败")
