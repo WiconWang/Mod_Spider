@@ -62,10 +62,17 @@ class mysqldbhand:
                 pass
 
     # 查找记录
-    def FindAll(self, table, var='*', where=''):
+    def FindAll(self, table, var='*', where='', order='', limit=''):
         if where != '':
             where = ' where ' + where
-        sql = "select " + var + " from " + table + where
+
+        if order != '':
+            order = ' order by ' + order
+
+        if limit != '':
+            limit = ' limit ' + limit
+
+        sql = "select " + var + " from " + table + where + order + limit
         self.con.execute(sql)
         return self.con.fetchall()
 
@@ -78,20 +85,21 @@ class mysqldbhand:
         try:
             for k, v in info.iteritems():
                 name.append("`%s`" % (str(k)))
-                value.append("'%s'" % (str(v)))
-                upstr += "`%s` = '%s', " % (str(k), str(v))
+                value.append("'%s'" % (MySQLdb.escape_string(str(v))))
+                upstr += "`%s` = '%s', " % (str(k),
+                                            MySQLdb.escape_string(str(v)))
         except UnicodeEncodeError:
             pass
         namestr = ','.join(name)
         valuestr = ','.join(value)
+
         # print upstr
-        upstr = upstr[:-1]
+        upstr = upstr.strip()[:-1]
 
         if where:
             for m, n in where.iteritems():
                 where_str += "`%s` = '%s', " % (str(m), str(n))
-
-            where_str = where_str[:-1]
+            where_str = where_str.strip()[:-1]
             sql = "update `%s` set  %s where %s" % (table, upstr, where_str)
         else:
             sql = "insert into `%s` (%s) values (%s) " % (
