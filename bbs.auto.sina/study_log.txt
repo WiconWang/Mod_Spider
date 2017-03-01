@@ -1,0 +1,12 @@
+
+mysql = mysqldbhand()
+mysql.dbconnect()
+row = mysql.FindAll('fimport', 'autohome', "fid < 235 and autohome !='' ")
+print(row)
+
+conf = ConfigParser()
+conf.read('dbconfig.conf')
+db_user = conf.get('db', 'db_host')
+
+todb = spider_output.spider_output()
+row = todb.SaveContent()

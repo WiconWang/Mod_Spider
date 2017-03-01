@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+#mysqldb
+import time, MySQLdb
+
+#连接
+conn=MySQLdb.connect(host="localhost",user="root",passwd="root",db="test",charset="utf8")
+cursor = conn.cursor()
+
+#删除表
+sql = "drop table if exists user"
+cursor.execute(sql)
+
+#创建
+sql = "create table if not exists user(name varchar(128) primary key, created int(10))"
+cursor.execute(sql)
+
+#写入
+sql = "insert into user(name,created) values(%s,%s)"
+param = ("aaa",int(time.time()))
+n = cursor.execute(sql,param)
+print 'insert',n
+
+#写入多行
+sql = "insert into user(name,created) values(%s,%s)"
+param = (("bbb",int(time.time())), ("ccc",33), ("ddd",44) )
+n = cursor.executemany(sql,param)
+print 'insertmany',n
+
+#更新
+sql = "update user set name=%s where name='aaa'"
+param = ("zzz")
+n = cursor.execute(sql,param)
+print 'update',n
+
+#查询
+n = cursor.execute("select * from user")
+for row in cursor.fetchall():
+    print row
+    for r in row:
+        print r
+
+#删除
+sql = "delete from user where name=%s"
+param =("bbb")
+n = cursor.execute(sql,param)
+print 'delete',n
+
+#查询
+n = cursor.execute("select * from user")
+print cursor.fetchall()
+
+cursor.close()
+
+#提交
+conn.commit()
+#关闭
+conn.close()
+
+
+
+
+
+
+          # 数据表初始化
+
+
+        # # 启动日志追踪
+        # logfile = {}
+        # logfile['logfile'] = "run.log"  # uop['logfile']
+        # logfile['loglevel'] = "INFO"  # uop['level']
+        # logger = self.getlog(logfile)  # 构造log对象
+
+        # # 启动表连接
+        # db = mysqldbhand(logger)
+        # db.dbconnect()
+        # db.init_tables(self.projectid)  # 数据表初始化
+        # 启动表内容
+        # 查询
+        # res = db.FindAll(self.db_table, '*', 'id=7')
+        # 插入
+        # insert_data = {'url':"hello",'title':"how",'content':"you"}
+        # res = db.Save(self.db_table, insert_data)
+        # 修改
+        # save_data = {'url': "hello11", 'title': "how11", 'content': "you11"}
+        # save_where = {'id': "7"}
+        # res = db.Save(self.db_table, save_data, save_where)
+        #
+        # self.logger.info(res)
+        # print res
+        # db.insertone(start, 'urls')

@@ -6,10 +6,19 @@ import urlparse
 
 
 class HtmlParser(object):
+    global db
+    global project
+    global project_field
+
+    def __init__(self, table, project, project_field):
+        self.datas = []
+        self.project = project[0]
+        self.project_field = project_field
 
     def _get_new_urls(self, page_url, soup):
         new_urls = set()
-        links = soup.find_all('a', href=re.compile(r"/view/\d+\.htm"))
+        links = soup.find_all('a', href=re.compile(r"%s" % (self.project[5])))
+
         for link in links:
             new_url = link['href']
             new_full_url = urlparse.urljoin(page_url, new_url)
@@ -18,18 +27,15 @@ class HtmlParser(object):
 
     def _get_new_data(self, page_url, soup):
         res_data = {}
+        temp_data = ''
 
         # url
         res_data['url'] = page_url
 
-        # dd
-        title_node = soup.find(
-            'dd', class_="lemmaWgt-lemmaTitle-title").find("h1")
-        res_data['title'] = title_node.get_text()
-
-        # div class
-        summary_node = soup.find('div', class_="lemma-summary")
-        res_data['summary'] = summary_node.get_text()
+        # 其它等收集的字段
+        for field in self.project_field:
+            temp_data = eval(field[4])
+            res_data["%s" % (field[2])] = temp_data.get_text()
 
         return res_data
 
