@@ -41,8 +41,8 @@ class Task(object):
                     str += " %s区：%s个样本，平均房价为%s元。" %(json['counts'][val]['_id'], json['counts'][val]['count'], int(json['counts'][val]['preprice']))
 
 
-            url = 'http://tts.baidu.com/text2audio?idx=1&tex={0}&cuid=baidu_speech_' \
-                  'demo&cod=2&lan=zh&ctp=1&pdt=1&spd=4&per=4&vol=10&pit=8'.format(str)
+            url = 'http://tts.baidu.com/text2audio?idx=1&cuid=baidu_speech_' \
+                  'demo&cod=2&lan=zh&ctp=1&pdt=1&spd=4&per=5&vol=10&pit=6&tex={0}'.format(str)
             # 直接播放语音
             os.system('mplayer "%s"' % url)
 
