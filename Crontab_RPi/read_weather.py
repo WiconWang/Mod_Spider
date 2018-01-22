@@ -20,8 +20,9 @@ class ReadWeather(object):
             return False
 
         today_dict = jn_json['weather'][0]['future'][0]
-        today_suggest = '天气%s, %s' %(jn_json['weather'][0]['today']['suggestion']['dressing']['brief'], jn_json['weather'][0]['today']['suggestion']['dressing']['details'])
-
+        # today_suggest = '天气%s, %s' %(jn_json['weather'][0]['today']['suggestion']['dressing']['brief'], jn_json['weather'][0]['today']['suggestion']['dressing']['details'])
+        today_suggest = '天气%s' %(jn_json['weather'][0]['today']['suggestion']['dressing']['brief'])
+        now_aqi = '污染指数：%s，空气质量：%s' % (jn_json['weather'][0]['now']['air_quality']['city']['aqi'], jn_json['weather'][0]['now']['air_quality']['city']['quality'])
         today_weather = self.formatWeather(today_dict['text'])
 
         # 指定第二地点天气
@@ -32,11 +33,11 @@ class ReadWeather(object):
             fx_weather = self.formatWeather(fx_dict['text'])
             fx_str = '临沂市费县，今天%s,最高%s度, 最低%s度, %s' % (fx_weather, fx_dict['high'],fx_dict['low'],fx_dict['wind'])
 
-        str = '您好，现在时间：%s，今天是%s, 济南市天气 %s,最高%s度, 最低%s度, %s ,%s %s' % (datetime.now().strftime("%H:%M"), today_dict['day'],today_weather,today_dict['high'],today_dict['low'],today_dict['wind'], today_suggest, fx_str)
+        str = '现在%s，要上班了，今天是%s, 济南今天 %s,最高%s度, 最低%s度, %s ,%s, %s 。 %s' % (datetime.now().strftime("%H:%M"), today_dict['day'],today_weather,today_dict['high'],today_dict['low'],today_dict['wind'], today_suggest, now_aqi, fx_str)
 
         url = 'http://tts.baidu.com/text2audio?idx=1&cuid=baidu_speech_' \
               'demo&cod=2&lan=zh&ctp=1&pdt=1&spd=4&per=4&vol=10&pit=6&tex={0}'.format(str)
-
+        print(str)
         # 直接播放语音
         os.system('mplayer "%s"' % url)
         pass
