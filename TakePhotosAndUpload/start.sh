@@ -1,5 +1,5 @@
 #!/bin/bash
 nowtime=`date +%Y%m%d_%H%M%S`
-path="~/Monitor/Cam_$nowtime.jpg"
+path="/home/pi/Monitor/Cam_$nowtime.jpg"
 fswebcam --no-banner -r 640x480 $path
-/usr/bin/python processer.py  $path
+python3 processer.py  $path
