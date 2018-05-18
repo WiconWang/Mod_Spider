@@ -45,7 +45,7 @@ def process(img_path):
         img_path = new_img_path
 
     # 获取图片尺寸
-    width, height = _get_img_size(img_path)
+    # width, height = _get_img_size(img_path)
 
     try:
         # 上传到七牛
