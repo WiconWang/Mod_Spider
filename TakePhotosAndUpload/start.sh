@@ -1,4 +1,6 @@
 #!/bin/bash
+
+cd `dirname $0`
 nowtime=`date +%Y%m%d_%H%M%S`
 path="/home/pi/Monitor/Cam_$nowtime"
 fswebcam --no-banner -r 640x480 $path"1.jpg"
