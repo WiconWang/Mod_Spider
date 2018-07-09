@@ -42,7 +42,7 @@ def division(path, path2):
         # 每小节时间，单位秒
         step_time = 60
         print("* 对文件:" + str(file) + " 的切片调速合并工作已开启！")
-        print("* 预计会有 " + str(int(video_time / step_time)+1) + " 个文件碎片产生")
+        print("* 预计会有 " + str(int(video_time / step_time) + 1) + " 个文件碎片产生")
         while start < video_time * 100:
             end = start + step_time * 100
 
@@ -55,44 +55,48 @@ def division(path, path2):
             video_result = subprocess.run(args=sub, shell=True)
             # print(video_result)
             print("- 文件第" + str(count) + "片，已成功分离")
-            adjust(path2, count, file_temp)
+
+            file_step1 = path2 + file_temp + "step1_" + str(count) + '.mp4'
+            file_step2 = path2 + file_temp + "step2_" + str(count) + '.mp4'
+            # 本碎片的速度
+            pts = random.randint(50, 200) / 100
+            if pts == 1:
+                pts = 1.1
+            # 声音和视频正好相反，因此取反
+            pts_audio = int((1 / pts) * 100) / 100
+            sub = 'ffmpeg -y -i ' + file_step1 + ' -r 25 -filter_complex "[0:v]setpts=' \
+                  + str(pts) + '*PTS[v];[0:a]atempo=' + str(
+                pts_audio) + '[a]" -map "[v]" -map "[a]" ' + file_step2 + '  -loglevel quiet'
+            video_result = subprocess.run(args=sub, shell=True)
+            # print(video_result)
+            print("- 文件碎片" + str(count) + "号的速度，已调整为" + str(pts) + "倍")
+
             start = end
             count = count + 1
 
+        time.sleep(2)
         merge(path2, file, file_temp, count - 1)
-
-
-def adjust(path, count, file_temp):
-    file_step1 = path + file_temp + "step1_" + str(count) + '.mp4'
-    file_step2 = path + file_temp + "step2_" + str(count) + '.mp4'
-    # 本碎片的速度
-    pts = random.randint(5, 20) / 10
-    if pts == 1:
-        pts = 1.1
-    sub = 'ffmpeg -y -i ' + file_step1 + ' -r 30 -filter_complex "[0:v]setpts=' \
-          + str(pts) + '*PTS[v];[0:a]atempo=' + str(
-        pts) + '[a]" -map "[v]" -map "[a]" ' + file_step2 + '  -loglevel quiet'
-    video_result = subprocess.run(args=sub, shell=True)
-    # print(video_result)
-    print("- 文件碎片" + str(count) + "号的速度，已调整为" + str(pts) + "倍")
-    return True
 
 
 # 传入 生成目标位置，文件名， 临时文件名，临时文件最大号，原文件fps，原文件size
 def merge(path, file, file_temp, count):
     print(count)
     all_file = ''
+    sub = 'ffmpeg  -y'
+    filter_complex = ' -filter_complex \''
     for i in range(1, count + 1):
-        sub_part = 'ffmpeg –i  process/' + file_temp + "step2_" + str(i)\
-                   + '.mp4 –vcodec copy –acodec copy –vbsf part_' + str(i) + '.ts'
-        print(sub_part)
-        video_result = subprocess.run(args=sub_part, shell=True)
-        all_file = all_file + 'part_' + str(i) + '.ts|'
-    all_file = all_file[0:len(all_file) - 1]
+        sub += ' -i  process/' + file_temp + "step2_" + str(i) + '.mp4 '
+        filter_complex += ' [' + str(i - 1) + ':0] [' + str(i - 1) + ':1] '
+    sub += " -r 25 " + filter_complex + "concat=n=" + str(
+        count) + ":v=1:a=1 [v] [a]' -map '[v]' -map '[a]' " + path + file + '  -loglevel quiet'
+
+    # ffmpeg -i process/_20180709_000404_step2_1.mp4
+    # -i process/_20180709_000404_step2_2.mp4
+    # -i process/_20180709_000404_step2_3.mp4
+    # -i process/_20180709_000404_step1_1.mp4
+    # -filter_complex '[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] [3:0] [3:1] concat=n=4:v=1:a=1 [v] [a]' -map '[v]' -map '[a]' output.mp4
+    # print(sub)
     print("+ 正在合并文件碎片" + file + " ")
-    sub = 'ffmpeg -i "concat:'+all_file+'" -acodec copy -vcodec copy -absf aac_adtstoasc ' + path + file + ' -loglevel quiet'
-    # sub = 'ffmpeg -y -i "concat:' + all_file + '" -c copy ' + path + file + ' -loglevel quiet'
-    print(sub)
     video_result = subprocess.run(args=sub, shell=True)
 
     # for i in range(1, count + 1):
