@@ -25,6 +25,16 @@ def division(path, path2):
         file_temp = time.strftime('_%Y%m%d_%H%M%S_', time.localtime())
         file_temp_step1 = file_temp + "step1_"
 
+        print('----')
+        print(file)
+        # 检测是否有srt的汉字字幕，如果有，先合并
+        file_srt = os.path.splitext(file)[0] + '.zh-CN.srt'
+        if os.path.exists(file_srt):
+            print("* 检测到字幕:" + str(file_srt) + " 正在合并！")
+            subsrt = 'ffmpeg -y -i ' + path + file + ' -i ' + path + file_srt + ' -vf  subtitles=' + path + file_srt + ' ' + file_temp + 'srt.mp4 -loglevel quiet'
+            video_result = subprocess.run(args=subsrt, shell=True)
+            file = file_temp + 'srt.mp4'
+
         # 检测终端类型并选择不同命令
         cmd_grep = ("find" if ('Windows' in platform.system()) else "grep")
         strcmd = 'ffmpeg -y -i ' + path + file + ' 2>&1 | ' + cmd_grep + ' "Duration"'
@@ -132,4 +142,3 @@ if __name__ == '__main__':
     except Exception as e:
         print("警告，程序出错:")
         print(e)
-
