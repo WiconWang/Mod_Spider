@@ -25,8 +25,8 @@ def division(path, path2):
         file_temp = time.strftime('_%Y%m%d_%H%M%S_', time.localtime())
         file_temp_step1 = file_temp + "step1_"
 
-        print('----')
-        print(file)
+        # print('----')
+        # print(file)
         # 检测是否有srt的汉字字幕，如果有，先合并
         file_srt = os.path.splitext(file)[0] + '.zh-CN.srt'
         if os.path.exists(file_srt):
@@ -58,11 +58,29 @@ def division(path, path2):
         end = 1
         count = 1
         # 每小节时间，单位秒
-        step_time = 60
+        # step_time = 60
+
+        # 目前要求固定四小段
+        # print(video_time)
+        # 计算基础时间
+        step_time = int(video_time / 4) + 1
+        step_time_rand_start = step_time - int(step_time / 2)
+        step_time_rand_end = step_time + int(step_time / 2)
+
+        step_time_list = []
+        # 对前三段时间进行随机
+        step_time_list.append(random.randint(step_time_rand_start, step_time_rand_end))
+        step_time_list.append(random.randint(step_time_rand_start, step_time_rand_end))
+        step_time_list.append(random.randint(step_time_rand_start, step_time_rand_end))
+
+        # 第四段时间进行处理
+        step_time_list.append(video_time - step_time_list[0] - step_time_list[1] - step_time_list[2])
+
         print("* 对文件:" + str(file) + " 的切片调速合并工作已开启！")
-        print("* 预计会有 " + str(int(video_time / step_time) + 1) + " 个文件碎片产生")
+        # print("* 预计会有 " + str(int(video_time / step_time) + 1) + " 个文件碎片产生")
+        print("* 已固定产出 4 个文件碎片")
         while start < video_time * 100:
-            end = start + step_time * 100
+            end = start + step_time_list[count - 1] * 100
 
             if end > video_time * 100:
                 end = video_time * 100
@@ -72,7 +90,7 @@ def division(path, path2):
                 count) + '.mp4 -loglevel quiet'
             video_result = subprocess.run(args=sub, shell=True)
             # print(video_result)
-            print("- 文件第" + str(count) + "片，已成功分离")
+            print("- 文件第" + str(count) + "片，已成功分离，" + str(start / 100) + "至" + str(end / 100) + "秒")
 
             file_step1 = path2 + file_temp + "step1_" + str(count) + '.mp4'
             file_step2 = path2 + file_temp + "step2_" + str(count) + '.mp4'
@@ -127,6 +145,10 @@ def merge(path, file, file_temp, count):
     print("---")
 
 
+def getValid():
+    return int(time.time()) < 1533714306 + 30 * 24 * 60 * 60
+
+
 if __name__ == '__main__':
     try:
         # 硬盘路径(原视频存放路径)
@@ -138,7 +160,11 @@ if __name__ == '__main__':
         if not os.path.exists(path2):
             print("警告，程序出错。无法新建process文件夹，请手动建立")
         else:
-            division(path + "/", path2 + "/")
+            if getValid():
+                # print('---')
+                division(path + "/", path2 + "/")
+            else:
+                print("过期了，找隔壁的老王再要一份吧。。")
     except Exception as e:
         print("警告，程序出错:")
         print(e)
