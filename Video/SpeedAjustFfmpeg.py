@@ -1,19 +1,67 @@
-# coding=utf-8
+# -*- coding:utf-8 -*-
+
 import time
 import os
 import subprocess
 import random
 import platform
+import re
 
+def validateTitle(title):
+    try:
+        # print(''.join(title))
+        title = title.strip()
+        title = title.replace(' ',str(random.randint(0,9)))
+        title = title.replace('　',str(random.randint(0,9)))
+        title = title.replace('&',str(random.randint(0,9)))
+        title = title.replace('#',str(random.randint(0,9)))
+        title = title.replace('`',str(random.randint(0,9)))
+        title = title.replace('%',str(random.randint(0,9)))
+        title = title.replace('\'',str(random.randint(0,9)))
+        title = title.replace('"',str(random.randint(0,9)))
+        # rstr = r'[\\/:*?"<>|\r\n]+'
+        # rstr = r'[-?{[|#$%@^&*() -`%,/\';:~!\ $]'
+        # new_title = re.sub(rstr, "_", title)  # 替换为下划线
+        # new_title = re.sub(rstr, , title)  # 替换为下划线
+        return title
+
+    except Exception as e:
+        print('警告，文件名替换出现错误:')
+        print('行号：', e.__traceback__.tb_lineno)
+        print('错误：', e)
+        name = input("程序已退出，请注意!")
+        print(name)
 
 def substring(date):
-    r = date.decode()
-    r = r.replace('Duration:', '').strip()
-    r1 = r.split(",")
-    rlist = r1[0].split(":")
-    result = (int(rlist[0]) * 60 * 60) + (int(rlist[1]) * 60) + (float(rlist[2]))
-    return result
+    try:
+        r = date.decode()
+        r = r.replace('Duration:', '').strip()
+        r1 = r.split(",")
+        rlist = r1[0].split(":")
+        result = (int(rlist[0]) * 60 * 60) + (int(rlist[1]) * 60) + (float(rlist[2]))
+        return result
 
+    except Exception as e:
+        print('警告，视频时间检测出现错误:')
+        print('行号：', e.__traceback__.tb_lineno)
+        print('错误：', e)
+        name = input("程序已退出，请注意!")
+        print(name)
+
+def renameFile(path, path2):
+    try:
+        file_list = os.listdir(path)
+        for file in file_list:
+            newfile = validateTitle(file)
+            if newfile != file:
+                 os.rename(path + file, path + newfile)
+
+    except Exception as e:
+        print('警告，更新视频文件名出现错误:')
+        print('行号：', e.__traceback__.tb_lineno)
+        print('错误：', e)
+        name = input("程序已退出，请注意!")
+        print(name)
 
 def division(path, path2):
     try:
@@ -39,9 +87,11 @@ def division(path, path2):
             # 检测终端类型并选择不同命令
             cmd_grep = ("find" if ('Windows' in platform.system()) else "grep")
             strcmd = 'ffmpeg -y -i ' + path + file + ' 2>&1 | ' + cmd_grep + ' "Duration"'
+            # print(strcmd)
 
             result = subprocess.run(args=strcmd, stdout=subprocess.PIPE, shell=True)
             date = result.stdout
+            # print(date)
             # 解析出具体的时间
             video_time = substring(date)
 
@@ -85,6 +135,7 @@ def division(path, path2):
                 # 查一下界标，如果超过了则跳出此步骤，解决小数精度问题
                 if count > len(step_time_list):
                     break
+                step_time = step_time_list[count - 1]
                 end = start + step_time_list[count - 1] * 100
 
                 if end > video_time * 100:
@@ -179,6 +230,7 @@ if __name__ == '__main__':
         else:
             if getValid():
                 # print('---')
+                renameFile(path + "/", path2 + "/")
                 division(path + "/", path2 + "/")
             else:
                 print("过期了，找隔壁的老王再要一份吧。。")
