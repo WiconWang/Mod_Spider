@@ -70,6 +70,7 @@ def division(path, path2):
             if os.path.splitext(file)[1] != '.mp4':
                 continue
 
+            print("* 对文件:" + str(file) + " 的切片调速合并工作已开启！")
             # 定义此文件号
             file_temp = time.strftime('_%Y%m%d_%H%M%S_', time.localtime())
             file_temp_step1 = file_temp + "step1_"
@@ -128,7 +129,6 @@ def division(path, path2):
             step_time_list.append(round((video_time - step_time_list[0] - step_time_list[1] - step_time_list[2]), 2))
             # print(step_time_list)
 
-            print("* 对文件:" + str(file) + " 的切片调速合并工作已开启！")
             # print("* 预计会有 " + str(int(video_time / step_time) + 1) + " 个文件碎片产生")
             print("* 已固定产出 4 个文件碎片")
             while start < video_time * 100:
