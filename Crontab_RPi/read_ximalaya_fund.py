@@ -23,10 +23,12 @@ class Task(object):
                 if not res_r:
                     break
         # print(audio_url)
-        local_url = self.download(audio_url)
+        # local_url = self.download(audio_url)
         # print(local_url)
         # 直接播放语音
-        os.system('mplayer  -af volume=+15  "%s"' % local_url)
+        self.redis.sadd("audio_xmly_url", audio_url)
+        # os.system('mplayer  -af volume=+15  "%s"' % local_url)
+        os.system('mplayer  -af volume=+15  "%s"' % audio_url)
 
     def getjson(self, url):
         header = {
@@ -54,17 +56,17 @@ class Task(object):
         # return "http://%s/%s" % ('od.qingting.fm', r.json()['play_path'])
 
     # 提取出音频URL启动下载
-    def download(self, audio_url):
-        timenow = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-
-        r2 = requests.get(audio_url)
-        local_url = "%s/XMLY_%s.m4a" % (os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../Music")), timenow)
-        with open(local_url, "wb") as code:
-            code.write(r2.content)
-
-        self.redis.sadd("audio_xmly_url", audio_url)
-        return local_url
+    # def download(self, audio_url):
+    #     timenow = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    #
+    #     r2 = requests.get(audio_url)
+    #     local_url = "%s/XMLY_%s.m4a" % (os.path.abspath(
+    #         os.path.join(os.path.dirname(__file__), "../Music")), timenow)
+    #     with open(local_url, "wb") as code:
+    #         code.write(r2.content)
+    #
+    #     self.redis.sadd("audio_xmly_url", audio_url)
+    #     return local_url
 
 
 if __name__ == '__main__':
