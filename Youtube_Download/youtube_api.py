@@ -13,7 +13,7 @@ DEVELOPER_KEY = config.get("YOUTUBE", "DEVELOPER_KEY")
 YOUTUBE_API_SERVICE_NAME = config.get("YOUTUBE", "YOUTUBE_API_SERVICE_NAME")
 YOUTUBE_API_VERSION = config.get("YOUTUBE", "YOUTUBE_API_VERSION")
 PROXY_HOST = config.get("YOUTUBE", "PROXY_HOST")
-PROXY_PORT = config.get("YOUTUBE", "PROXY_PORT")
+PROXY_PORT = int(config.get("YOUTUBE", "PROXY_PORT"))
 
 
 def youtube_search(options):
@@ -37,7 +37,7 @@ def youtube_search(options):
     # Add each result to the appropriate list, and then display the lists of
     # matching videos, channels, and playlists.
     for search_result in search_response.get('items', []):
-        print search_result
+        # print search_result
         if search_result['id']['kind'] == 'youtube#video':
           videos.append('%s (%s)' % (search_result['snippet']['title'],
                                      search_result['id']['videoId']))
@@ -48,14 +48,14 @@ def youtube_search(options):
           playlists.append('%s (%s)' % (search_result['snippet']['title'],
                                         search_result['id']['playlistId']))
 
-    print 'Videos:\n', '\n'.join(videos), '\n'
-    print 'Channels:\n', '\n'.join(channels), '\n'
-    print 'Playlists:\n', '\n'.join(playlists), '\n'
+    print('Videos:\n', '\n'.join(videos), '\n')
+    print('Channels:\n', '\n'.join(channels), '\n')
+    print('Playlists:\n', '\n'.join(playlists), '\n')
 
 
 if __name__ == '__main__':
     args = {'q': '娱乐', 'max_results': 20}
-    try:
-        youtube_search(args)
-    except HttpError, e:
-        print 'An HTTP error %d occurred:\n%s' % (e.resp.status, e.content)
+    # try:
+    youtube_search(args)
+    # except HttpError(e):
+    #     print('An HTTP error %d occurred:\n%s' % (e.resp.status, e.content))
