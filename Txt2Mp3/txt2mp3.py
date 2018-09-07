@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # 读取指定目录文件名，并播放
+import configparser
 import os
 # from datetime import datetime
 # import redis
@@ -11,10 +12,12 @@ import base64
 
 class Task(object):
     def __init__(self):
-        self.URL = "http://api.xfyun.cn/v1/service/v1/tts"
-        self.AUE = "lame"
-        self.APP_ID = "2"
-        self.API_KEY = "1"
+        config = configparser.ConfigParser()
+        config.readfp(open('config.ini'))
+        self.URL = config.get("XUN_FEI", "URL")
+        self.AUE = config.get("XUN_FEI", "AUE")
+        self.APP_ID = config.get("XUN_FEI", "APP_ID")
+        self.API_KEY = config.get("XUN_FEI", "API_KEY")
         # 硬盘路径(原视频存放路径)
         self.SOURCE_PATH = os.path.dirname(os.path.realpath(__file__)) + "/txt/"
         # 切割后的视频存放路径

@@ -1,17 +1,26 @@
 # -*- coding: utf-8 -*-
-# 给朋友做的。检测taidong..到haier的通勤情况，如果超过一小时,则发布播报。
+#  检测坐标1到坐标2的通勤情况，如果超过一小时,则发布播报。
 import time
 import os
 import requests
+import configparser
+
 
 
 class Task(object):
 
+    def __init__(self):
+        config = configparser.ConfigParser()
+        config.readfp(open('config.ini'))
+        self.start = config.get("CHECK_BUS_TIME", "Start")
+        self.end = config.get("CHECK_BUS_TIME", "End")
+        self.ak = config.get("CHECK_BUS_TIME", "ak")
+
     def main(self):
         url = "http://api.map.baidu.com/direction/v2/transit"
         # 选择一系列地址，并查询最新一第是否已经在缓存 中有记录，如果有记录则找下一地址，直到找到一个最新的
-        params = {'origin': '36.089114,120.365267', 'destination': '36.138679,120.424789',
-                  'ak': 'xc6tm6rMwaXEeGQp7INbGChMxLG609Vq', 'page_size': '3', 'tactics_incity': '3'}
+        params = {'origin': self.start, 'destination': self.end,
+                  'ak': self.ak, 'page_size': '3', 'tactics_incity': '3'}
         result = self.getjson(url, params)
 
         html = '注意：无法取得今日的路况和用时,请及时查询！注意，无法取得路况信息！'
@@ -43,9 +52,9 @@ class Task(object):
 
         url = 'http://tts.baidu.com/text2audio?idx=1&cuid=baidu_speech_' \
               'demo&cod=2&lan=zh&ctp=1&pdt=1&spd=4&per=4&vol=10&pit=6&tex={0}'.format(html)
-        # print(url)
+        print(url)
         # 直接播放语音
-        os.system('mplayer "%s"' % url)
+        # os.system('mplayer "%s"' % url)
 
     def getjson(self, url, params):
         # 请求远端服务器并选取JSON

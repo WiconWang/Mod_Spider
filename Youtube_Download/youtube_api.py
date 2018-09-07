@@ -1,18 +1,23 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import configparser
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import socks
 import socket
 
-DEVELOPER_KEY = 'AIzaSyC2D1q0RmS7zv1557sdddevG8qxXzLCt9k'
-YOUTUBE_API_SERVICE_NAME = 'youtube'
-YOUTUBE_API_VERSION = 'v3'
+config = configparser.ConfigParser()
+config.readfp(open('config.ini'))
+DEVELOPER_KEY = config.get("YOUTUBE", "DEVELOPER_KEY")
+YOUTUBE_API_SERVICE_NAME = config.get("YOUTUBE", "YOUTUBE_API_SERVICE_NAME")
+YOUTUBE_API_VERSION = config.get("YOUTUBE", "YOUTUBE_API_VERSION")
+PROXY_HOST = config.get("YOUTUBE", "PROXY_HOST")
+PROXY_PORT = config.get("YOUTUBE", "PROXY_PORT")
 
 
 def youtube_search(options):
-    socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, "127.0.0.1", 1087)
+    socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, PROXY_HOST, PROXY_PORT)
     socket.socket = socks.socksocket
 
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,

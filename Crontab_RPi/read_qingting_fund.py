@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # 爬取蜻蜓FM财经的几个节目最新一期，并下载下来，提供给mplayer播放
+import configparser
 import os
 import requests
 import time
@@ -8,7 +9,13 @@ import redis
 
 class Task(object):
     def __init__(self):
-        self.redis = redis.Redis('localhost', 6379)
+        config = configparser.ConfigParser()
+        config.readfp(open('config.ini'))
+        self.host = config.get("LOCAL_REDIS", "Host")
+        self.port = config.get("LOCAL_REDIS", "Port")
+        self.redis_key = config.get("QING_TING", "Redis_key")
+        self.file_staff = config.get("QING_TING", "File_staff")
+        self.redis = redis.Redis(self.host, self.port)
 
     def main(self):
         # 选择一系列地址，并查询最新一第是否已经在缓存 中有记录，如果有记录则找下一地址，直到找到一个最新的
@@ -20,14 +27,14 @@ class Task(object):
         for i in url:
             audio_url = self.getjson(i)
             if audio_url:
-                res_r = self.redis.sismember("audio_daily_url", audio_url)
+                res_r = self.redis.sismember(self.redis_key, audio_url)
                 if not res_r:
                     break
 
         local_url = self.download(audio_url)
         print(local_url)
         # 直接播放语音
-        # os.system('mplayer  -af volume=+15  "%s"' % local_url)
+        os.system('mplayer  -af volume=+15  "%s"' % local_url)
 
     def getjson(self, url):
 
@@ -45,12 +52,12 @@ class Task(object):
         timenow = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
 
         r2 = requests.get(audio_url)
-        local_url = "%s/QT74000_%s.m4a" % (os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../Music")), timenow)
+        local_url = "%s/%s_%s.m4a" % (os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "./Audio")), self.file_staff, timenow)
         with open(local_url, "wb") as code:
             code.write(r2.content)
 
-        self.redis.sadd("audio_daily_url", audio_url)
+        self.redis.sadd(self.redis_key, audio_url)
         return local_url
 
 

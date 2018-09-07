@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # 取出Mongodb中前几个招聘数据
 import time
+
+import configparser
 from datetime import datetime, timedelta
 
 import redis
@@ -11,11 +13,15 @@ from collections import defaultdict
 
 class Task(object):
     def __init__(self):
-        pass
+        config = configparser.ConfigParser()
+        config.readfp(open('config.ini'))
+        self.host = config.get("LOCAL_MONGO", "host")
+        self.port = config.get("LOCAL_MONGO", "port")
+        # pass
         # self.redis = redis.Redis('localhost', 6379)
 
     def main(self):
-        connection = pymongo.MongoClient('127.0.0.1', 27017)
+        connection = pymongo.MongoClient(self.host, self.port)
         db = connection['crawler_zhaopin']
         mongo_conn = db["zp"]
         timestart =datetime.now() - timedelta(days=60)
