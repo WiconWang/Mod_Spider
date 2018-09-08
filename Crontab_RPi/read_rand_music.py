@@ -8,7 +8,7 @@ import time
 def main(mp3path):
     print(mp3path)
     # 先播放一首音乐做闹钟
-    os.system('mplayer  -af volume=+0 %s' % mp3path)
+    os.system('mplayer  -af volume=+5 %s' % mp3path)
 
 
 def rand(music_path):
