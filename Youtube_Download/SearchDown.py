@@ -4,14 +4,12 @@ import configparser
 from tkinter import *
 import configparser
 import os
-
+from PIL import Image, ImageTk
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import socks
 import socket
 from you_get import common
-
-
 
 
 class Gui(object):
@@ -52,8 +50,6 @@ class Gui(object):
         searchButton = Button(TkFrame, text="搜索",
                               command=lambda: self.show_result(TkWindow=TkWindow, searchWord=searchInput.get()))
         searchButton.grid(row=0, column=2)
-        spLabel = Label(TkFrame, text="---------------------------------------------------------------------")
-        spLabel.grid(row=1, column=0)
         return TkWindow, TkFrame
 
     def show_result(self, TkWindow, searchWord):
@@ -62,15 +58,28 @@ class Gui(object):
 
         con_frame = Frame(TkWindow)
         con_frame.pack()
+        con_frame.grid_remove()
         # v = []
         i = 0
         for search_result in getData.get('items', []):
             print(search_result)
             if search_result['id']['kind'] == 'youtube#video':
-                # v[i] = IntVar()
-                ck = Checkbutton(con_frame, text=search_result['snippet']['title'],
+                load = Image.open(search_result['snippet']['thumbnails']['default']['url'])
+                render = ImageTk.PhotoImage(load)
+                ck_img = Label(con_frame, image=render)
+                ck_img.grid(row=i + 1, column=1)
+
+
+                ck_channelId = Label(con_frame, text=search_result['snippet']['channelId'])
+                ck_channelId.grid(row=i + 1, column=2)
+
+                ck_title = Checkbutton(con_frame, text=search_result['snippet']['title'],
                                  variable=search_result['id']['videoId'], command=self.click_1)
-                ck.grid(row=i + 1, sticky=W)
+                ck_title.grid(row=i + 1, column=3, sticky=W)
+
+                ck_publishedAt = Label(con_frame, text=search_result['snippet']['publishedAt'])
+                ck_publishedAt.grid(row=i + 1, column=4)
+
                 # videos.append('%s (%s)' % (search_result['snippet']['title'],
                 #                            search_result['id']['videoId']))
                 i = i + 1
@@ -80,8 +89,8 @@ class Gui(object):
         DownloadButton.grid(row=i + 1)
 
     def youtube_search(self, searchWord):
-        socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, self.proxy_host, self.proxy_port)
-        socket.socket = socks.socksocket
+        # socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, self.proxy_host, self.proxy_port)
+        # socket.socket = socks.socksocket
         youtube = build(self.api_name, self.api_version,
                         developerKey=self.dev_key)
         # Call the search.list method to retrieve results matching the specified
@@ -91,7 +100,7 @@ class Gui(object):
             part='id,snippet',
             maxResults=self.max_results
         ).execute()
-
+        print(search_response)
         return search_response
 
         # videos = []
@@ -116,13 +125,13 @@ class Gui(object):
         # print('Channels:\n', '\n'.join(channels), '\n')
         # print('Playlists:\n', '\n'.join(playlists), '\n')
 
-    def download(self,url,savepath):
+    def download(self, url, savepath):
+        print(savepath)
         # common.any_download(url=url, stream_id='mp4', info_only=False, output_dir=r('%s' % savepath), merge=True)
         pass
+
 
 if __name__ == '__main__':
     window, frame = Gui().initWindow()
     # Gui().show_result(frame)
     window.mainloop()
-
-
