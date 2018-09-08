@@ -28,7 +28,7 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
     # 早晨和晚上分别放不同的文件夹内容
-    if int(time.strftime('%H', time.localtime(time.time()))) > 12:
+    if int(time.strftime('%H', time.localtime(time.time()))) < 12:
         main(rand(config.get("RAND_MUSIC", "path")))
     else:
         main(rand(config.get("RAND_MUSIC", "path_night")))
