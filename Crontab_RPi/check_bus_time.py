@@ -11,7 +11,7 @@ class Task(object):
 
     def __init__(self):
         config = configparser.ConfigParser()
-        config.readfp(open('config.ini'))
+        config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
         self.start = config.get("CHECK_BUS_TIME", "Start")
         self.end = config.get("CHECK_BUS_TIME", "End")
         self.ak = config.get("CHECK_BUS_TIME", "ak")

@@ -5,7 +5,7 @@ import pymysql
 import re
 
 config = configparser.ConfigParser()
-config.readfp(open('config.ini'))
+config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
 
 db = pymysql.connect(
     host="%s" % config.get("AWS_MYSQL", "Host"),

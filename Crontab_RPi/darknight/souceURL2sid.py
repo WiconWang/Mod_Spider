@@ -6,7 +6,7 @@ import pymysql
 
 
 config = configparser.ConfigParser()
-config.readfp(open('config.ini'))
+config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
 db_local = pymysql.connect(
     host="%s" % config.get("LOCAL_MYSQL", "Host"),
     user="%s" % config.get("LOCAL_MYSQL", "User"),

@@ -13,7 +13,7 @@ import base64
 class Task(object):
     def __init__(self):
         config = configparser.ConfigParser()
-        config.readfp(open('config.ini'))
+        config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
         self.URL = config.get("XUN_FEI", "URL")
         self.AUE = config.get("XUN_FEI", "AUE")
         self.APP_ID = config.get("XUN_FEI", "APP_ID")

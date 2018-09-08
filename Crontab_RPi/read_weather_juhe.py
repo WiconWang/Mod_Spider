@@ -12,7 +12,7 @@ class ReadWeather(object):
 
     def __init__(self):
         config = configparser.ConfigParser()
-        config.readfp(open('config.ini'))
+        config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
         self.Area1_name = config.get("WEATHER", "Area1_name")
         self.Area2_name = config.get("WEATHER", "Area2_name")
         self.Key = config.get("WEATHER", "Juhe_Key")

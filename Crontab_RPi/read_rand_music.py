@@ -24,8 +24,7 @@ def rand(music_path):
 
 
 if __name__ == '__main__':
-
     config = configparser.ConfigParser()
-    config.readfp(open('config.ini'))
+    config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
     music_path = config.get("RAND_MUSIC", "path")
     main(rand(music_path))

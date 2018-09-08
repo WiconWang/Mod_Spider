@@ -7,8 +7,12 @@ from googleapiclient.errors import HttpError
 import socks
 import socket
 
+#https://segmentfault.com/a/1190000012769292
+# pip3 install --upgrade google-api-python-client
+# pip3 install --upgrade google-auth google-auth-oauthlib google-auth-httplib2
+
 config = configparser.ConfigParser()
-config.readfp(open('config.ini'))
+config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
 DEVELOPER_KEY = config.get("YOUTUBE", "DEVELOPER_KEY")
 YOUTUBE_API_SERVICE_NAME = config.get("YOUTUBE", "YOUTUBE_API_SERVICE_NAME")
 YOUTUBE_API_VERSION = config.get("YOUTUBE", "YOUTUBE_API_VERSION")
