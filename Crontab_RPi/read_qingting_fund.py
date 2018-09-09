@@ -22,7 +22,7 @@ class Task(object):
         url = [
             'http://i.qingting.fm/wapi/channels/74000/programs/page/1',
             'http://i.qingting.fm/wapi/channels/108208/programs/page/1',
-            'http://i.qingting.fm/wapi/channels/95626/programs/page/1'
+            'http://i.qingting.fm/wapi/channels/141268/programs/page/1'
         ]
         for i in url:
             audio_url = self.getjson(i)
