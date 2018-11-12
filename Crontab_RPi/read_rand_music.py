@@ -5,7 +5,7 @@ import random
 import time
 
 
-def main(mp3path, readText):
+def main(mp3path, readText, volume):
     text = "现在 " + time.strftime('%H:%M', time.localtime(time.time())) + " " + readText
     print(text)
     url = 'http://tts.baidu.com/text2audio?idx=1&tex={0}&cuid=baidu_speech_' \
@@ -14,7 +14,7 @@ def main(mp3path, readText):
     os.system('mplayer "%s"' % url)
     time.sleep(1)
     # 先播放一首音乐做闹钟
-    os.system('mplayer  -af volume=+5 %s' % mp3path)
+    os.system('mplayer  -af volume=%s %s' % (volume, mp3path))
 
 
 def rand(music_path):
@@ -34,7 +34,9 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.readfp(open(os.path.join(os.path.dirname(__file__), "config.ini")))
     # 早晨和晚上分别放不同的文件夹内容
+    volume = "+5"
     if int(time.strftime('%H', time.localtime(time.time()))) < 12:
-        main(rand(config.get("RAND_MUSIC", "path")), "快点起床了！")
+        volume = "-5"
+        main(rand(config.get("RAND_MUSIC", "path")), "快点起床了！", volume)
     else:
         main(rand(config.get("RAND_MUSIC", "path_night")), "准备睡觉了！")
