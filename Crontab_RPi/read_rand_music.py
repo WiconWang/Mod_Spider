@@ -39,4 +39,4 @@ if __name__ == '__main__':
         volume = "-5"
         main(rand(config.get("RAND_MUSIC", "path")), "快点起床了！", volume)
     else:
-        main(rand(config.get("RAND_MUSIC", "path_night")), "准备睡觉了！")
+        main(rand(config.get("RAND_MUSIC", "path_night")), "准备睡觉了！", volume)
