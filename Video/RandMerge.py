@@ -33,7 +33,6 @@ def validateTitle(title):
         print(name)
 
 
-
 def renameFile(path, path2):
     try:
         file_list = os.listdir(path)
@@ -50,9 +49,8 @@ def renameFile(path, path2):
         print(name)
 
 
-
 def getValid():
-    return int(time.time()) < 1535698955 + 30 * 24 * 60 * 60
+    return int(time.time()) < 1535698955 + 3000 * 24 * 60 * 60
 
 
 def getFullList(path):

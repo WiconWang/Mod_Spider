@@ -214,7 +214,7 @@ def merge(path, file, file_temp, count):
 
 
 def getValid():
-    return int(time.time()) < 1534584028 + 30 * 24 * 60 * 60
+    return int(time.time()) < 1534584028 + 3000 * 24 * 60 * 60
 
 
 if __name__ == '__main__':
